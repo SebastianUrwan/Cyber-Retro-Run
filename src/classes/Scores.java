@@ -1,8 +1,16 @@
 package classes;
 
-public class Scores extends AbstractDialog{
+public class Scores{
+   
+    String nickname;
+    int score;    
     
-    public Scores(){
-        super();
+    public Scores(String _nickname, int _score){        
+        this.nickname = _nickname;
+        this.score = _score;
+    }
+    
+    public String toString() { 
+        return this.nickname + " " + Integer.toString(this.score) ;
     }
 }
