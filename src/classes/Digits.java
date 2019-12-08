@@ -12,7 +12,7 @@ import org.netbeans.lib.awtextra.AbsoluteConstraints;
 
 public class Digits extends JLabel implements ActionListener{
         
-    BufferedImage digitImg = ImageIO.read(MainWindow.class.getResourceAsStream("/retrorun/digits.png"));
+    BufferedImage digitImg = ImageIO.read(MainFrame.class.getResourceAsStream("../graphics/digits.png"));
     
     public Heart heart;
     public JTextField tf;
@@ -122,7 +122,7 @@ public class Digits extends JLabel implements ActionListener{
         
         if(MainFrame.currentStage.equals(MainFrame.GameStage.stage1)){          // if player is in the first stage (arcade)
             Area areaA = new Area(MainFrame.character.getBounds());
-            Area areaB = new Area(MainFrame.obstacle.getBounds());
+            Area areaB = new Area(MainFrame.digit.getBounds());
 
             if(areaA.intersects(areaB.getBounds2D())){                          // checking collision between digit and character
                 if(generatedDigit >= 0 && generatedDigit <= 1){                    

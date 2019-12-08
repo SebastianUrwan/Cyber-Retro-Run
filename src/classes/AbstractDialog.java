@@ -134,7 +134,7 @@ public abstract class AbstractDialog extends JDialog{
     //-------------------------------
     public void setUpFont(){
         try {            
-            fontUrl = getClass().getResource("kongtext.ttf");
+            fontUrl = getClass().getResource("../graphics/kongtext.ttf");
             retroFont = Font.createFont(Font.TRUETYPE_FONT, new File(fontUrl.getPath())).deriveFont(12f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();            
             ge.registerFont(retroFont);                                    
