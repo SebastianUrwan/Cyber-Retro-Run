@@ -5,17 +5,14 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import static java.lang.Thread.sleep;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.Timer;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
@@ -31,8 +28,8 @@ public class MainFrame extends javax.swing.JFrame {
     public ScoreRead sr;
     public static Digits digit;
     static MainFrame mainWindow;    
-    BufferedImage characterImg = ImageIO.read(MainFrame.class.getResourceAsStream("../graphics/spriteSheet.png"));
-            
+    BufferedImage characterImg = ImageIO.read(MainFrame.class.getResourceAsStream("../graphics/spriteSheet.png"));    
+    
     private final int LAYER1_REFRESH_TIME       = 20;
     private final int LAYER2_REFRESH_TIME       = 45;
     private final int LAYER3_REFRESH_TIME       = 100;
@@ -83,8 +80,7 @@ public class MainFrame extends javax.swing.JFrame {
 	menu, stage1, stage2, over;
     }
     static GameStage currentStage               = GameStage.menu;
-        
-    private Timer timer;    
+            
     private javax.swing.JLabel  buildings1Layer1, buildings1Layer2, buildings2Layer1, buildings2Layer2, buildings3Layer1, buildings3Layer2, 
                                 waterDynamicLayer1, waterDynamicLayer2, waterStaticLayer1, waterStaticLayer2, background;
     
@@ -158,9 +154,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel1.add(buildings3Layer1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 330));        
         jPanel1.add(buildings3Layer2, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 330));                                
         jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 640, 480));        
-        
-        //timer = new Timer(2, this);
-        //timer.start();
+                
         animation();
     }
         
@@ -381,23 +375,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }
-    
-    //--------------------------------------------------------------------------
-    //--- SOUNDS PLAYER
-    //--------------------------------------------------------------------------
-    public static void playSound(String name) {
-        InputStream input;
-        
-        try{
-            input = new FileInputStream("C:\\Users\\PC\\Desktop\\RetroRun\\src\\retrorun\\" + name + ".wav");
-            AudioStream audio = new AudioStream(input);
-            AudioPlayer.player.start(audio);
-            
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-    
+   
     
     //--------------------------------------------------------------------------
     //--- GENERATED CODE
@@ -418,13 +396,21 @@ public class MainFrame extends javax.swing.JFrame {
         menuBackground = new javax.swing.JLabel();
         viniete = new javax.swing.JLabel();
         character = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         pointsLabel = new javax.swing.JTextField();
         codeLabel = new javax.swing.JTextField();
         ground = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setAlwaysOnTop(true);
         setUndecorated(true);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formKeyReleased(evt);
+            }
+        });
 
         jPanel1.setPreferredSize(new java.awt.Dimension(640, 480));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -623,10 +609,16 @@ public class MainFrame extends javax.swing.JFrame {
 
         menuBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/CRR_logo.png"))); // NOI18N
         jPanel1.add(menuBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 640, 480));
+
+        viniete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/viniet.png"))); // NOI18N
         jPanel1.add(viniete, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         character.setPreferredSize(new java.awt.Dimension(44, 76));
         jPanel1.add(character, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 350, -1, -1));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/moze.gif"))); // NOI18N
+        jLabel1.setPreferredSize(new java.awt.Dimension(640, 480));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pointsLabel.setBackground(new java.awt.Color(0, 0, 0));
         pointsLabel.setForeground(new java.awt.Color(245, 245, 245));
@@ -665,58 +657,6 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    
-    //--------------------------------------------------------------------------
-    //--- FORM KEY
-    //--------------------------------------------------------------------------
-    private void formKeyPressed(java.awt.event.KeyEvent evt) {                                
-        int x = evt.getKeyCode();
-                
-        if(x == KeyEvent.VK_Q){
-            System.exit(0);
-        }
-        
-        if(currentStage.equals(MainFrame.GameStage.stage1) || currentStage.equals(MainFrame.GameStage.stage2)){
-            
-            // back to menu from current game stage
-            if(x == KeyEvent.VK_ESCAPE){
-                codeLabel.setText("");
-                digit.clear();
-                currentStage = GameStage.menu;
-                mainWindow.checkStage();                
-                digit.velocityX = 0;
-                points = 0;
-            }
-                        
-            if(animator == Animation.run){                
-                // if up arrow (jumping) key is pressed 
-                if(x == KeyEvent.VK_UP){                    
-                    animator = Animation.jump;
-                    grounded = false;
-                    playSound("jump");
-                }
-                // if down arrow (crouching) key is pressed 
-                else if(x == KeyEvent.VK_DOWN && grounded){                    
-                    animator = Animation.slide;
-                    character.setLocation(character.getLocation().x, 374);
-                }
-            }
-        }
-    }   
-    
-    private void formKeyReleased(java.awt.event.KeyEvent evt) {                                 
-        int x = evt.getKeyCode();
-    
-        if(animator != Animation.run){
-            
-            // back from crouching 
-            if(x == KeyEvent.VK_DOWN && grounded){
-                animator = Animation.run;
-                character.setLocation(character.getLocation().x, 354);
-            }
-        }
-    }              
-    
     
     //--------------------------------------------------------------------------
     //--- BUTTONS 
@@ -851,6 +791,57 @@ public class MainFrame extends javax.swing.JFrame {
         onMouseExit(backButton);
     }//GEN-LAST:event_backButtonMouseExited
 
+    //--------------------------------------------------------------------------
+    //--- FORM KEY
+    //--------------------------------------------------------------------------
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        int x = evt.getKeyCode();
+                
+        if(x == KeyEvent.VK_Q){
+            System.exit(0);
+        }
+        
+        if(currentStage.equals(MainFrame.GameStage.stage1) || currentStage.equals(MainFrame.GameStage.stage2)){
+            
+            // back to menu from current game stage
+            if(x == KeyEvent.VK_ESCAPE){
+                codeLabel.setText("");
+                digit.clear();
+                currentStage = GameStage.menu;
+                mainWindow.checkStage();                
+                digit.velocityX = 0;
+                points = 0;
+            }
+                        
+            if(animator == Animation.run){                
+                // if up arrow (jumping) key is pressed 
+                if(x == KeyEvent.VK_UP){                    
+                    animator = Animation.jump;
+                    grounded = false;
+                    new PlaySound("jump");
+                }
+                // if down arrow (crouching) key is pressed 
+                else if(x == KeyEvent.VK_DOWN && grounded){                    
+                    animator = Animation.slide;
+                    character.setLocation(character.getLocation().x, 374);
+                }
+            }
+        }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+        int x = evt.getKeyCode();
+    
+        if(animator != Animation.run){
+            
+            // back from crouching 
+            if(x == KeyEvent.VK_DOWN && grounded){
+                animator = Animation.run;
+                character.setLocation(character.getLocation().x, 354);
+            }
+        }
+    }//GEN-LAST:event_formKeyReleased
+
     
     //--------------------------------------------------------------------------
     //--- BUTTONS' TEXTURE
@@ -923,6 +914,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel ground;
     public static javax.swing.JButton hardButton;
     public static javax.swing.JButton highScoreButton;
+    private javax.swing.JLabel jLabel1;
     public static javax.swing.JPanel jPanel1;
     private static javax.swing.JLabel menuBackground;
     public static javax.swing.JButton nickButton;

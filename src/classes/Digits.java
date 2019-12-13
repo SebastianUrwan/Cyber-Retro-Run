@@ -68,7 +68,7 @@ public class Digits extends JLabel implements ActionListener{
     // generating random digit between 0 to 9
     private void generateDigit(){
         int MIN = 0;
-        int MAX = 2;
+        int MAX = 10;
         generatedDigit = (int)(Math.random() * (MAX - MIN));        
        
         // setting proper part of graphics to jLabel
@@ -133,7 +133,7 @@ public class Digits extends JLabel implements ActionListener{
                     MainFrame.points += 10;                                      
                     generatePosition();                                         // new parameters for the next digit                
                     generateDigit();                                            
-                    MainFrame.playSound("collect");                             // sound of colleting digit
+                    new PlaySound("collect");                                   // sound of colleting digit
                 }
                 else if(generatedDigit >= 2 && generatedDigit <= 9){
                     if(life > 1){
