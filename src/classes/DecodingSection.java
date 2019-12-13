@@ -92,15 +92,11 @@ public class DecodingSection extends AbstractDialog{
     public void keyCounter(KeyEvent e){        
         char key = e.getKeyChar();
 
-        if(Character.isLowerCase(key)) {                                        // changing lower letter into upper 
-            e.setKeyChar(Character.toUpperCase(key));
-        }
+        if(Character.isLowerCase(key))                                          // changing lower letter into upper 
+            e.setKeyChar(Character.toUpperCase(key));      
 
-        if(key >= 'a' && key <= 'z') {                                          // chars only from a to z
-            if(charCounter <= 2)                                                // only 3 characters
-                charCounter++;                                                  
-            else
-                e.consume();                                                    // skip others
+        if((key >= 'a' && key <= 'z') && charCounter <= 2) {                    // chars only from a to z & only 3 characters
+                charCounter++;            
         }                                
         else if(key == KeyEvent.VK_BACK_SPACE || key == KeyEvent.VK_DELETE){    // backspace and delete key handling
             String tempCode = textField.getText();
@@ -109,7 +105,7 @@ public class DecodingSection extends AbstractDialog{
         else if(key == KeyEvent.VK_ENTER)                                       // backspace and delete key handling
             checkCode();                    
         else
-            e.consume();                    
+            e.consume();                                                        // skip others
     }
 
     // generate code to comparison with player's answer
@@ -128,9 +124,7 @@ public class DecodingSection extends AbstractDialog{
     }
     
     // checking player's answer
-    void checkCode(){
-        System.out.println("Klik: " + textField.getText());
-        
+    void checkCode(){                
         if(textField.getText().equals(validCode[0] + validCode[1] + validCode[2])){                        
             MainFrame.currentStage = MainFrame.GameStage.stage1;
             MainFrame.mainWindow.checkStage();

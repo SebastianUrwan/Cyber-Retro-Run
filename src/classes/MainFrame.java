@@ -33,7 +33,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final int LAYER1_REFRESH_TIME       = 20;
     private final int LAYER2_REFRESH_TIME       = 45;
     private final int LAYER3_REFRESH_TIME       = 100;
-    private final int CHARACTER_REFRESH_TIME    = 9;
+    private final int CHARACTER_REFRESH_TIME    = 11;
     private final int JUMP_REFRESH_TIME         = 1;              
     private final int LAYERS_START_X            = 640;    
     private final int GAME_SPEED                = 2;
@@ -95,26 +95,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
                 
         // setting font
-        try {
-            URL url = getClass().getResource("../graphics/kongtext.ttf");            
-            Font retroFont = Font.createFont(Font.TRUETYPE_FONT, new File(url.getPath())).deriveFont(12f);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(retroFont);
-            startButton.setFont(retroFont);
-            nickButton.setFont(retroFont);
-            highScoreButton.setFont(retroFont);
-            exitButton.setFont(retroFont);
-            easyButton.setFont(retroFont);
-            normalButton.setFont(retroFont);
-            hardButton.setFont(retroFont);
-            backButton.setFont(retroFont);
-            pointsLabel.setFont(retroFont);            
-            codeLabel.setFont(retroFont);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch(FontFormatException e) {
-            e.printStackTrace();
-        }
+        setUpFont();
 
         // creating all jLabel
         buildings1Layer1        = new javax.swing.JLabel();
@@ -337,6 +318,34 @@ public class MainFrame extends javax.swing.JFrame {
         };
         t.start();
     }
+    
+    
+    //--------------------------------------------------------------------------
+    //--- set font for all Jobcjects
+    //--------------------------------------------------------------------------
+    private void setUpFont(){
+        try {
+            URL url = getClass().getResource("../graphics/kongtext.ttf");            
+            Font retroFont = Font.createFont(Font.TRUETYPE_FONT, new File(url.getPath())).deriveFont(12f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(retroFont);
+            startButton.setFont(retroFont);
+            nickButton.setFont(retroFont);
+            highScoreButton.setFont(retroFont);
+            exitButton.setFont(retroFont);
+            easyButton.setFont(retroFont);
+            normalButton.setFont(retroFont);
+            hardButton.setFont(retroFont);
+            backButton.setFont(retroFont);
+            pointsLabel.setFont(retroFont);            
+            codeLabel.setFont(retroFont);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch(FontFormatException e) {
+            e.printStackTrace();
+        }
+    }
+    
     
     //--------------------------------------------------------------------------
     //--- visible of buttons on different stages
