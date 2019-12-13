@@ -1,5 +1,6 @@
 package classes;
 
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
@@ -15,6 +16,7 @@ public class DecodingSection extends AbstractDialog{
                                            };
     
     private JTextField pointsLabel      = new JTextField(5);
+    private JLabel codeAid              = new JLabel();
     private boolean isTyping            = true;
     private int charCounter             = 0;
     private int bonusPoint              = 1000;
@@ -24,8 +26,14 @@ public class DecodingSection extends AbstractDialog{
     
     public DecodingSection(String _collectedCode) throws IOException{
         super(640, 480);
-          
+                  
         this.collectedCode = _collectedCode;        
+        
+        codeAid.setAlignmentX(Component.CENTER_ALIGNMENT);        
+        codeAid.setFocusable(false);
+        codeAid.setHorizontalTextPosition(SwingConstants.CENTER);        
+        codeAid.setIcon(new ImageIcon(getClass().getResource("../graphics/codeAid.png")));
+        
         pointsLabel.setBackground(new java.awt.Color(0, 0, 0));
         pointsLabel.setForeground(new java.awt.Color(245, 245, 245));
         pointsLabel.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -42,9 +50,11 @@ public class DecodingSection extends AbstractDialog{
         ganerateValidCode();
         getPoints();
         
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(pointsLabel);
         panel.add(Box.createVerticalStrut(10));
+        panel.add(codeAid);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(pointsLabel);
+        panel.add(Box.createVerticalStrut(15));
         panel.add(label);
         panel.add(Box.createVerticalStrut(15));        
         panel.add(textField);
