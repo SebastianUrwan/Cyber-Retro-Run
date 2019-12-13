@@ -27,17 +27,15 @@ public class Nickname extends AbstractDialog{
         panel.add(textField);
         panel.add(Box.createVerticalStrut(5));
         panel.add(button);
-        setUpPanel();        
+        setUpPanel();
     }
         
+    @Override
     public void keyCounter(KeyEvent e){    
         char c = e.getKeyChar();
         
-        if((c >= ' ' && c <= '~') || c == KeyEvent.VK_SPACE) {                  // ascii from 32 to 126
-            if(charCounter <= 8)                                                // only 9 characters
-                charCounter++;
-            else
-                e.consume();                                                    // skip others
+        if(((c >= ' ' && c <= '~') || c == KeyEvent.VK_SPACE) && charCounter <= 8){   // ascii from 32 to 126, up to 8 characters
+            charCounter++;
         }                
         else if(c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE){        // backspace and delete key handling
             String tempNick = textField.getText();
@@ -49,7 +47,7 @@ public class Nickname extends AbstractDialog{
             dispose();                                                          
         }
         else{
-            e.consume();
+            e.consume();                                                        // skip others
         }         
     }
     

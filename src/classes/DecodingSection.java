@@ -1,17 +1,8 @@
 package classes;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
-import java.net.URL;
-import java.util.ArrayList;
 import javax.swing.*;
 
 public class DecodingSection extends AbstractDialog{
@@ -23,13 +14,13 @@ public class DecodingSection extends AbstractDialog{
                                             {"1100", "M"}, {"1101", "N"}, {"1110", "O"}, {"1111", "P"}
                                            };
     
-    private JTextField pointsLabel      = new JTextField(5);    
+    private JTextField pointsLabel      = new JTextField(5);
     private boolean isTyping            = true;
+    private int charCounter             = 0;
     private int bonusPoint              = 1000;
     final private int MAX_BONUS         = 1000;
     private String collectedCode        = "";
     private String[] validCode          = new String[3];    
-    private int charCounter             = 0;    
     
     public DecodingSection(String _collectedCode) throws IOException{
         super(640, 480);
@@ -64,17 +55,17 @@ public class DecodingSection extends AbstractDialog{
     
     private void getPoints(){
         Thread t = new Thread(){
-            public void run(){                
-                for(;;){
+            public void run(){
+                while(true){
                     try{
-                        if(isTyping){
+                        if(isTyping){               
                             if(bonusPoint > 0){
                                 sleep(100);
                                 bonusPoint--;
-                                pointsLabel.setText(Integer.toString(bonusPoint));
+                                pointsLabel.setText(Integer.toString(bonusPoint));  // update displayed left points
                             }
                             else{                               
-                               logicStageDefeat();
+                                logicStageDefeat();                             // time is exceeded
                             }                            
                         }                        
                     }
@@ -87,8 +78,9 @@ public class DecodingSection extends AbstractDialog{
         t.start();
     }
     
+    @Override
     public void keyCounter(KeyEvent e){        
-        char key = e.getKeyChar();                
+        char key = e.getKeyChar();
 
         if(Character.isLowerCase(key)) {                                        // changing lower letter into upper 
             e.setKeyChar(Character.toUpperCase(key));

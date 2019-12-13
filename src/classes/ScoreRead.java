@@ -35,7 +35,7 @@ public class ScoreRead extends AbstractDialog{
         int numberOfLines = 0;
                 
         try{            
-            BufferedReader input = new BufferedReader(new FileReader("src/retrorun/data.txt"));            
+            BufferedReader input = new BufferedReader(new FileReader("data.txt"));            
             
             // reading data from file
             while(((line1 = input.readLine()) != null) && ((line2 = input.readLine()) != null)){
@@ -51,7 +51,7 @@ public class ScoreRead extends AbstractDialog{
                 numberOfLines = 20;
                     
             // displaying result in fixed order
-            for(int i = 0; i < numberOfLines; i++){                
+            for(int i = 0; i < numberOfLines; i++){
                 if(i < 9)
                     textArea.append("   " + "0" + (i+1) + ". " + dataToSort.get(i) + "\n");
                 else

@@ -12,7 +12,7 @@ public abstract class AbstractDialog extends JDialog{
     public Color whiteColour        = new Color(245, 245, 245);
     public Color blackColour        = new Color(0, 0, 0);
     public Color redColour          = new Color(255, 143, 159);
-    public Font retroFont;    
+    public Font retroFont;
     public JPanel panel             = new JPanel();    
     public JTextField textField     = new JTextField(12);
     public JTextArea textArea       = new JTextArea(18, 30);
@@ -71,7 +71,7 @@ public abstract class AbstractDialog extends JDialog{
             }
         });
     }
-    
+        
     public abstract void buttonMouseClicked(MouseEvent evt);    
     
     private void buttonMouseEntered(MouseEvent evt) {
