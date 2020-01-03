@@ -37,7 +37,7 @@ public class GameOver extends AbstractDialog{
     
     /**
      * Wciśnięcie przycisku spowoduje usunięcie dodatkowego okna i zresetuje liczbę punktów
-     * @param evt 
+     * @param evt nie używany
      */
     public void buttonMouseClicked(MouseEvent evt) {                                                      
         dispose();

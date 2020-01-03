@@ -104,7 +104,7 @@ public abstract class AbstractDialog extends JDialog{
         
     /**
      * Abstrakcyjna metoda służąca do indywidualnego zaimplemetowania przez klasy dziedziczące
-     * @param evt 
+     * @param evt nie używany
      */
     public abstract void buttonMouseClicked(MouseEvent evt);    
     

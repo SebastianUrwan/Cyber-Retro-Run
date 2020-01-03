@@ -767,7 +767,7 @@ public final class MainFrame extends javax.swing.JFrame {
 
     /**
      * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
-     * @param evt 
+     * @param evt nie używany 
      */
     private void startButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseEntered
         onMouseEnter(startButton);
