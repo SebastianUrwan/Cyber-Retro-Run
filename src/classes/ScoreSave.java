@@ -1,14 +1,24 @@
 package classes;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 
+/**
+ * Klasa, której zadaniem jest zapisywanie wyników pojedynczej rozgrywki (nickname wraz z uzyskanym wynikiem)
+ * @author Sebastian Urwan
+ */
 public class ScoreSave {
     
+    /** plik z wynikami graczy */
     public File scoreFile = new File("data.txt");    
-    int scoreToSave;    
     
+    /** wynik z ostatniej rozgrywki, który będzie zapisany do pliku */
+    private int scoreToSave;    
+    
+    /**
+     * Zapis danych na końcu pliku
+     * @param nickname pseudonim przekazany do zapisania
+     * @param score wynik przekazany do zapisania
+     */
     void save(String nickname, String score){
         try{
             if(!scoreFile.exists())

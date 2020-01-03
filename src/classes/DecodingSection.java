@@ -2,32 +2,67 @@ package classes;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import static java.lang.Thread.sleep;
 import javax.swing.*;
 
+/**
+ * Klasa dziedzicząca po klasie AbstractDialog
+ * Ustawia własne parametry gotowych obiektów
+ * @author Sebastian Urwan
+ */
 public class DecodingSection extends AbstractDialog{
-    
-    // char possibilities
+        
+    /** możliwe fragmenty kodu do zebrania  */
     final String[][] charCodes          =  {{"0000", "A"}, {"0001", "B"}, {"0010", "C"}, {"0011", "D"}, 
                                             {"0100", "E"}, {"0101", "F"}, {"0110", "G"}, {"0111", "H"}, 
                                             {"1000", "I"}, {"1001", "J"}, {"1010", "K"}, {"1011", "L"},
                                             {"1100", "M"}, {"1101", "N"}, {"1110", "O"}, {"1111", "P"}
                                            };
     
+    /** przechowywanie pola tekstowego przesłanego z klasy MainFrame */
     private JTextField pointsLabel      = new JTextField(5);
-    private JLabel codeAid              = new JLabel();
-    private boolean isTyping            = true;
-    private int charCounter             = 0;
-    private int bonusPoint              = 1000;
-    final private int MAX_BONUS         = 1000;
-    private String collectedCode        = "";
-    private String[] validCode          = new String[3];    
     
-    public DecodingSection(String _collectedCode) throws IOException{
+    /** przy pomocy etykiety będzie wyświetlana pomoc przy dekodowaniu */
+    private JLabel codeAid              = new JLabel();
+    
+    /** flaga przechowująca stan logiczny umożliwiający dalsze wpisywanie odpowiedzi */
+    private boolean isTyping            = true;
+    
+    /** pole przechowuje liczbę wpisanych znaków */
+    private int charCounter             = 0;
+    
+    /** pole przechowuje liczbę pozostałych bonusowych punktów */
+    private int bonusPoint              = 1000;
+    
+    /** pole przechowuje maksymalną liczbę bonusowych punktów */
+    final private int MAX_BONUS         = 1000;
+    
+    /** pole przechowujące tekst z zebranym kodem przesłany parametrem od klasy Digits */
+    private String collectedCode        = "";
+    
+    /** pole przechowuje poprawne fragmenty zdekowodanej wiadomości */
+    private String[] validCode          = new String[3];
+    
+    /** pole przechowujące aktualny poziom rozgrywki przesłany z klasy Digits */
+    public int copyLevel                = 0;
+        
+    /** pole przechowujące aktualną liczbę punktów przesłaną z klasy Digits */
+    public int copyPoints               = 0;
+    
+    /** pole przechowujące aktualny pseudonim gracza przesłany z klasy Digits */
+    public String nickname              = "";    
+    
+    /**
+     * Ustawia parametry obiektów okna dialogowego oraz wyświetla zebrany kod do dekodowania
+     * @param _collectedCode     
+     */
+    public DecodingSection(String collectedCode, int points, int level, String nickname){
         super(640, 480);
-                  
-        this.collectedCode = _collectedCode;        
+                                          
+        this.collectedCode = collectedCode;
+        this.copyPoints = points;
+        this.copyLevel = level;        
+        this.nickname = nickname;
         
         codeAid.setAlignmentX(Component.CENTER_ALIGNMENT);        
         codeAid.setFocusable(false);
@@ -44,7 +79,7 @@ public class DecodingSection extends AbstractDialog{
         pointsLabel.setFont(retroFont); 
         
         // displaying collected code with spaces
-        label.setText("Level " + MainFrame.level + ": " + collectedCode.substring(0,4) + " " + collectedCode.substring(4,8) + " " + collectedCode.substring(8,12));
+        label.setText("Level " + copyLevel + ": " + collectedCode.substring(0,4) + " " + collectedCode.substring(4,8) + " " + collectedCode.substring(8,12));
         button.setText("Decode");        
         setUpTextField("");
         ganerateValidCode();
@@ -63,6 +98,10 @@ public class DecodingSection extends AbstractDialog{
         setUpPanel();
     }
     
+    /**
+     * Metoda, która jest czasowo wykonywana i co określony czas zabiera bonusowe punkty.
+     * Koniec bonusowych punktów oznacza przegraną.
+     */
     private void getPoints(){
         Thread t = new Thread(){
             public void run(){
@@ -88,6 +127,10 @@ public class DecodingSection extends AbstractDialog{
         t.start();
     }
     
+    /**
+     * Metoda sprawdza długość wpisanej odpowiedzi i blokuje określone klawisze
+     * @param e odczytuje informacje o klawiszach
+     */
     @Override
     public void keyCounter(KeyEvent e){        
         char key = e.getKeyChar();
@@ -107,8 +150,10 @@ public class DecodingSection extends AbstractDialog{
         else
             e.consume();                                                        // skip others
     }
-
-    // generate code to comparison with player's answer
+    
+    /**
+     * Metoda generująca słowną prawidłową odpowiedź na podstawie zebranego kodu
+     */
     private void ganerateValidCode(){
         int counter = 0;
         
@@ -120,16 +165,18 @@ public class DecodingSection extends AbstractDialog{
             counter += 4;                                                       // move to the next 4 bit of collected binary code
         }
         
-        System.out.println(validCode[0] + validCode[1] + validCode[2]);
+        //System.out.println(validCode[0] + validCode[1] + validCode[2]);
     }
     
-    // checking player's answer
+    /**
+     * Metoda sprawdzająca poprawność wpisanej przez gracza odpowiedzi
+     */    
     void checkCode(){                
         if(textField.getText().equals(validCode[0] + validCode[1] + validCode[2])){                        
-            MainFrame.currentStage = MainFrame.GameStage.stage1;
-            MainFrame.mainWindow.checkStage();
-            MainFrame.level++;            
-            MainFrame.points += bonusPoint;
+            MainFrame.currentStage = GameStage.stage1;
+            MainFrame.currentStage.changeFlag(true);
+            copyLevel++;            
+            copyPoints += bonusPoint;
             bonusPoint = MAX_BONUS;
             dispose();                                                          // remove currently diplayed internal frame = next level
         }
@@ -138,20 +185,24 @@ public class DecodingSection extends AbstractDialog{
         }
     }
         
+    /**
+     * Metoda ustawiająca parametry po podaniu błędej odpowiedzi
+     */    
     private void logicStageDefeat(){                
         bonusPoint = MAX_BONUS;                                                 // reseting parameters
         isTyping = false;
         dispose();                                                              // remove currently diplayed internal frame
-        MainFrame.currentStage = MainFrame.GameStage.menu;
-        MainFrame.mainWindow.checkStage();
-
-        try {                                                                   // go to game over internal frame
-            new GameOver();                                    
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }  
+        MainFrame.currentStage = GameStage.menu;
+        MainFrame.currentStage.changeFlag(true);
+        
+        new GameOver(nickname, copyPoints);                                     // go to game over internal frame        
     }
 
+    /**
+     * Implementacja metody abstrakcyjnej - po wciśnięciu przycisku nie można zmieniać odpowiedzi
+     * @param evt nie używany
+     */
+    @Override
     public void buttonMouseClicked(java.awt.event.MouseEvent evt) {
         isTyping = false;
         checkCode();

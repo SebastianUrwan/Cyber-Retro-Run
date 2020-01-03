@@ -4,20 +4,40 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.IOException;
 
+/**
+ * Klasa dziedzicząca po klasie AbstractDialog
+ * Ustawia własne parametry gotowych obiektów
+ * @author Sebastian Urwan
+ */
 public class Nickname extends AbstractDialog{
         
-    private String nickname;    
+    /** przechowywanie tekstu przesłanego z klasy MainFrame */
+    public String nickname = "";
+    
+    /** przechowywanie przycisku przesłanego z klasy MainFrame */
+    public JButton nicknameButton;
+    
+    /** pole przechowuje liczbę wpisanych znaków */
     private int charCounter;
-            
-    public Nickname(String _nickname) throws IOException{
+           
+    /**
+     * Ustawia parametry obiektów okna dialogowego
+     * @param nickname pseudonim który będzie zaktualizowany w klasie głównej - MainFreame
+     * @param nicknameButton przycisk, którego tekst będzie zaktualizowany w klasie głównej - MainFreame
+     */
+    public Nickname(String nickname, JButton nicknameButton){
         super(200, 200);
         
-        this.nickname = _nickname;
-        this.charCounter = nickname.length();             
+        //this.copyFrame = mainFrame;
+        this.nickname = nickname;
+        this.nicknameButton = nicknameButton;
+        this.charCounter = this.nickname.length();
 
         setUpLabel();
+        
         label.setText("Your name");                
-        setUpTextField(this.nickname);                
+        setUpTextField(this.nickname);
+        
         setUpButton();
         button.setText("Confirm");
         
@@ -30,6 +50,10 @@ public class Nickname extends AbstractDialog{
         setUpPanel();
     }
         
+    /**
+     * Metoda sprawdza długość wpisanego pseudonimu i blokuje określone klawisze
+     * @param e odczytuje informacje o klawiszach
+     */
     @Override
     public void keyCounter(KeyEvent e){    
         char c = e.getKeyChar();
@@ -42,8 +66,8 @@ public class Nickname extends AbstractDialog{
             charCounter = tempNick.length();
         }
         else if(c == KeyEvent.VK_ENTER){
-            MainFrame.nickname = textField.getText();        
-            MainFrame.nickButton.setText(textField.getText());
+            this.nickname = textField.getText();        
+            this.nicknameButton.setText(textField.getText());
             dispose();                                                          
         }
         else{
@@ -51,9 +75,14 @@ public class Nickname extends AbstractDialog{
         }         
     }
     
+    /**
+     * Implementacja metody abstrakcyjnej - aktualizacja wpisanego pseudonimu i zamknięcie dodatkowego okna
+     * @param evt nie używany
+     */
+    @Override
     public void buttonMouseClicked(MouseEvent evt) {                                      
-        MainFrame.nickname = textField.getText();        
-        MainFrame.nickButton.setText(textField.getText());
+        this.nickname = textField.getText();        
+        this.nicknameButton.setText(textField.getText());
         dispose();
     }                                        
 }

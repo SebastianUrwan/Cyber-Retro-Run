@@ -6,19 +6,47 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.URL;
 
+/**
+ * Klasa, która tworzy i opisuje wszystkie elementy dodatkowego okna dialogowego
+ * @author Sebastian Urwan
+ */
 public abstract class AbstractDialog extends JDialog{
     
+    /** link do katalogu z czcionką */
     private URL fontUrl;
-    public Color whiteColour        = new Color(245, 245, 245);
-    public Color blackColour        = new Color(0, 0, 0);
-    public Color redColour          = new Color(255, 143, 159);
+    
+    /** zewnętrzna czcionka */
     public Font retroFont;
-    public JPanel panel             = new JPanel();    
+    
+    /** definicja koloru białego */
+    public Color whiteColour        = new Color(245, 245, 245);
+    
+    /** definicja koloru czarnego */
+    public Color blackColour        = new Color(0, 0, 0);
+    
+    /** definicja koloru czerwonego */
+    public Color redColour          = new Color(255, 143, 159);
+    
+    /** definicja panelu gromadzącego wszystkie obiekty interfejsu */
+    public JPanel panel             = new JPanel();
+    
+    /** definicja linii tekstowej */
     public JTextField textField     = new JTextField(12);
+    
+    /** definicja pola tekstowego */
     public JTextArea textArea       = new JTextArea(18, 30);
+    
+    /** definicja etykiety */
     public JLabel label             = new JLabel();
+    
+    /** definicja przycisku */
     public JButton button           = new JButton();
     
+    /**
+     * Konstruktor klasy abstrakcyjnej wywołuje tworzy JDialog oraz wywołuje metody opisujące wszystkie obiekty występujące w dodatkowym oknie 
+     * @param width opisuje szerokość dodatkowego okna dialogowego
+     * @param height opisuje wysokość dodatkowego okna dialogowego
+     */
     public AbstractDialog(int width, int height){
         super();
         
@@ -34,8 +62,9 @@ public abstract class AbstractDialog extends JDialog{
         setUpButton();        
     }
     
-    //--- Label ---------------------
-    //-------------------------------
+    /**
+     * Metoda ustawia parametry etykiety JLabel
+     */
     public void setUpLabel(){
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         label.setForeground(whiteColour);
@@ -44,8 +73,9 @@ public abstract class AbstractDialog extends JDialog{
         label.setFont(retroFont);
     }
     
-    //--- Button --------------------
-    //-------------------------------
+    /**
+     * Metoda ustawia parametry przycisku JButton
+     */
     public void setUpButton(){
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setForeground(whiteColour);        
@@ -72,20 +102,34 @@ public abstract class AbstractDialog extends JDialog{
         });
     }
         
+    /**
+     * Abstrakcyjna metoda służąca do indywidualnego zaimplemetowania przez klasy dziedziczące
+     * @param evt 
+     */
     public abstract void buttonMouseClicked(MouseEvent evt);    
     
+    /**
+     * Obsługa parametrów przycisku po najechaniu myszką na obiekt
+     * @param evt nie używane
+     */
     private void buttonMouseEntered(MouseEvent evt) {
         button.setForeground(redColour);
         button.setIcon(new ImageIcon(getClass().getResource("../graphics/btn2.png")));
     }                                      
 
+    /**
+     * Obsługa parametrów przycisku po wyjechaniu myszką z obiektu
+     * @param evt nie używane
+     */
     private void buttonMouseExited(java.awt.event.MouseEvent evt){
         button.setForeground(whiteColour);
         button.setIcon(new ImageIcon(getClass().getResource("../graphics/btn.png")));
     } 
-    
-    //--- TextField -----------------
-    //-------------------------------
+        
+    /**
+     * Metoda ustawia parametry linii tekstowej JTextField
+     * @param textToSet przesłany tekst będzie ustawiony jako tekst do wyświetlenia na elemencie
+     */
     public void setUpTextField(String textToSet){
         textField = new JTextField(textToSet, 12);        
         textField.setMaximumSize(textField.getPreferredSize());                
@@ -106,10 +150,16 @@ public abstract class AbstractDialog extends JDialog{
         });
     }
     
+    /**
+     * Metoda gotowa do nadpisania przez Nickanem i DecodingSection
+     * Będzie zliczać wpisane znaki i chronić przed wpisaniem odpowiednich znaków
+     * @param e odczytuje aktualne klawisze
+     */
     public void keyCounter(KeyEvent e){}
     
-    //--- TextArea ------------------
-    //-------------------------------
+    /**
+     * Metoda ustawia parametry pola tekstowego JTextArea
+     */
     public void setUpTextArea(){
         textArea.setForeground(whiteColour);
         textArea.setBackground(blackColour);
@@ -121,17 +171,20 @@ public abstract class AbstractDialog extends JDialog{
         textArea.setFont(retroFont);
     }
         
-    //--- Panel ---------------------
-    //-------------------------------
+    /**
+     * Metoda ustawiająca parametry panelu
+     * Panel zostaje dodany ze wszystkimi komponentami do dodatkowego okna 
+     */
     public void setUpPanel(){
         panel.setBackground(Color.BLACK);                
         add(panel);
         setVisible(true);
         pack();
     }
-        
-    //--- Font ----------------------
-    //-------------------------------
+                
+    /**
+     * Przygotowanie zewnętrznej czcionki do użycia 
+     */
     public void setUpFont(){
         try {            
             fontUrl = getClass().getResource("../graphics/kongtext.ttf");

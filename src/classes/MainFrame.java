@@ -1,99 +1,175 @@
 package classes;
 
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import static java.lang.Thread.sleep;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import javax.imageio.ImageIO;
-import javax.sound.sampled.*;
-import javax.swing.JButton;
-import javax.swing.Timer;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
+import javax.swing.*;
+import org.netbeans.lib.awtextra.AbsoluteConstraints;
 
-/********************************
+/**
+ * Główna klasa aplikacji
+ * zarządza i steruje wywołaniami obiektów
  * @author Sebastian Urwan
- * Telekomunikacja
- * Politechnika Gdańska
- *******************************/
-
-public class MainFrame extends javax.swing.JFrame {
+ */
+public final class MainFrame extends javax.swing.JFrame {
     
+    /** obiekt odpowiedzialny za odczyt danych z pliku */
     public ScoreRead sr;
-    public static Digits digit;
-    static MainFrame mainWindow;    
-    BufferedImage characterImg = ImageIO.read(MainFrame.class.getResourceAsStream("../graphics/spriteSheet.png"));    
     
+    /** obiekt poruszającej się cyfry */
+    public Digits digit;        
+    
+    /** grafika z klatkami animacji biegu i kucania bohatera */
+    BufferedImage characterImg;
+    
+    /** krotność czasu opóźnienia zegara; aktualizcja pozycji pierwszej warstwy budynków */
     private final int LAYER1_REFRESH_TIME       = 20;
+    
+    /** krotność czasu opóźnienia zegara; aktualizcja pozycji środkowej warstwy budynków */
     private final int LAYER2_REFRESH_TIME       = 45;
+    
+    /** krotność czasu opóźnienia zegara; aktualizcja pozycji ostatniej warstwy budynków */
     private final int LAYER3_REFRESH_TIME       = 100;
+    
+    /** krotność czasu opóźnienia zegara; aktualizcja klatki animacji bohatera */
     private final int CHARACTER_REFRESH_TIME    = 11;
+    
+    /** krotność czasu opóźnienia zegara; aktualizcja parametrów skoku */
     private final int JUMP_REFRESH_TIME         = 1;              
+    
+    /** wartość początkowa od której będą przemieszczały się budynki */
     private final int LAYERS_START_X            = 640;    
+    
+    /** szybkość gry */
     private final int GAME_SPEED                = 2;
+    
+    /** wartość siły grawitacji */
     private double gravity                      = 1.5; 
-    
-    // positions of moving elements on display
-    public int currLayer1Pos                    = 0;
-    public int currLayer2Pos                    = 0;
-    public int currLayer3Pos                    = 0;
-    public int charXPos                         = 0;
-    public int charYPos                         = 0;
-    
-    // number of multiplicity, diving game time by reapeter give static REFRESH_TIME
-    public int repeaterCounterLayer1            = 1;
-    public int repeaterCounterLayer2            = 1;
-    public int repeaterCounterLayer3            = 1;
-    public int repeaterCounterChar              = 1;
-    public int repeaterCounterJump              = 1;        
-    public long gameTime                        = 0; // counting in miliseconds
-    
-    public boolean swLayer1                     = false;
-    public boolean swLayer2                     = false;
-    public boolean swLayer3                     = false;
         
-    public static int points                    = 0;
-    public static int level                     = 1;
+    /** aktualna pozycja pierwszej warstwy budunków */
+    public int currLayer1Pos                    = 0;
+    
+    /** aktualna pozycja środkowej warstwy budunków */
+    public int currLayer2Pos                    = 0;
+    
+    /** aktualna pozycja ostatniej warstwy budunków */
+    public int currLayer3Pos                    = 0;
+    
+    /** aktualna pozycja X obrazu odczytująca klatkę animacji */
+    public int charXPos                         = 0;
+    
+    /** aktualna pozycja Y obrazu odczytująca klatkę animacji */
+    public int charYPos                         = 0;
        
-    // on start - character parameters
-    public boolean canSlide                     = false;
+    /** liczba powrótrzeń cykli zegara (REFRESH_TIME) wykonanych przez pierwszą warstwę budynków */
+    public int repeaterCounterLayer1            = 1;
+    
+    /** liczba powrótrzeń cykli zegara (REFRESH_TIME) wykonanych przez środkową warstwę budynków */
+    public int repeaterCounterLayer2            = 1;
+    
+    /** liczba powrótrzeń cykli zegara (REFRESH_TIME) wykonanych przez ostatnią warstwę budynków */
+    public int repeaterCounterLayer3            = 1;
+    
+    /** liczba powrótrzeń cykli zegara (REFRESH_TIME) wykonanych przez przetworzenie animacji bogatera */
+    public int repeaterCounterChar              = 1;
+    
+    /** liczba powrótrzeń cykli zegara (REFRESH_TIME) wykonanych przez pojedynczą aktualizację parametrów skoku */
+    public int repeaterCounterJump              = 1;        
+    
+    /** pole przechowujące czas trwania aplikacji */
+    public long gameTime                        = 0;
+    
+    /** switch przełączający pierwszą część warstwy (pierwsza warstwa budynków) na drugą */
+    public boolean swLayer1                     = false;
+    
+    /** switch przełączający pierwszą część warstwy (środkowa warstwa budynków) na drugą */
+    public boolean swLayer2                     = false;
+    
+    /** switch przełączający pierwszą część warstwy (ostatnia warstwa budynków) na drugą */
+    public boolean swLayer3                     = false;        
+       
+    /** flaga oznaczająca możliwość wykonania ślizgu */
+    private boolean canSlide                    = false;
+    
+    /** flaga oznaczająca kontakt bohatera z podłożem */
     private boolean grounded                    = true;
-    private double minJumpHeight                = 354.0;
+    
+    /** flaga oznaczająca kontakt bohatera z podłożem */
+    private final double minJumpHeight          = 354.0;
+    
+    /** maksymalna wysokość podczas wykonywania skoku */
+    private final double maxJumpHeight          = 260.0;
+            
+    /** aktualna wysokość skoku */
     private double jumpHeight                   = 354.0;
-    private double maxJumpHeight                = 260.0;
     
-    // on start - displaying nickname
-    protected static String nickname            = "player1";   
+    /** nickname wyświetlany podczas uruchomienia aplikacji */
+    public String nickname                      = "player1";   
     
+    /** tryb wyliczeniowy służący do opisu aktualnego stanu bohatera */
     public enum Animation {
 	run, jump, fall, slide;
     }
-    Animation animator                          = Animation.run;
-        
-    public static enum GameStage {
-	menu, stage1, stage2, over;
-    }
-    static GameStage currentStage               = GameStage.menu;
-            
-    private javax.swing.JLabel  buildings1Layer1, buildings1Layer2, buildings2Layer1, buildings2Layer2, buildings3Layer1, buildings3Layer2, 
-                                waterDynamicLayer1, waterDynamicLayer2, waterStaticLayer1, waterStaticLayer2, background;
     
-    public MainFrame() throws IOException{
-        initComponents();
+    /** steruje możliwością modyfikacji parametrów bohatera w zależności od przyjętego stanu */
+    public Animation animator                   = Animation.run;
+    
+    /** tryb wyliczeniowy służący do opisu aktualnego stanu bohatera */
+    public static GameStage currentStage;
         
-        // creating object of class Obstacle 
-        try{            
-            digit = new Digits(jPanel1, codeLabel);                
-        }catch(IOException e){
-            e.printStackTrace();
+    /** pierwsza część pierwszej warstwy poruszających się budynków - aktywna na start */
+    private final JLabel buildings1Layer1;
+    
+    /** druga część pierwszej warstwy poruszających się budynków - nieaktywna na start */
+    private final JLabel buildings1Layer2;
+    
+    /** pierwsza część drugiej warstwy poruszających się budynków - aktywna na start */
+    private final JLabel buildings2Layer1;
+    
+    /** druga część drugiej warstwy poruszających się budynków - nieaktywna na start */
+    private final JLabel buildings2Layer2;
+    
+    /** pierwsza część trzeciej warstwy poruszających się budynków - aktywna na start */
+    private final JLabel buildings3Layer1;
+    
+    /** drugiej część trzeciej warstwy poruszających się budynków - nieaktywna na start */
+    private final JLabel buildings3Layer2;
+    
+    /** pierwsza część warstwy poruszającej się wody - aktywna na start */
+    private final JLabel waterDynamicLayer1;
+    
+    /** druga część warstwy poruszającej się wody - nieaktywna na start */
+    private final JLabel waterDynamicLayer2;
+    
+    /** pierwsza część pierwszej warstwy poruszających się budynków - aktywna na start */
+    private final JLabel waterStaticLayer1;
+    
+    /** pierwsza część pierwszej warstwy poruszających się budynków - aktywna na start */
+    private final JLabel waterStaticLayer2;
+    
+    /** pierwsza część pierwszej warstwy poruszających się budynków - aktywna na start */
+    private final JLabel background;
+    
+    /**
+     * Kontruktor wywołuje i ustawia parametry wszystkich poruszających się elementów 
+     * Wywołuje obiekt klasy Digit     
+     */
+    public MainFrame(){
+        initComponents();        
+        try {    
+            characterImg = ImageIO.read(MainFrame.class.getResourceAsStream("../graphics/spriteSheet.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
                 
+        currentStage = GameStage.menu;        
+        MainFrame.currentStage.changeFlag(true);
+        
         // setting font
         setUpFont();
 
@@ -111,218 +187,223 @@ public class MainFrame extends javax.swing.JFrame {
         background              = new javax.swing.JLabel();
 
         // setting jLabels' icons
-        buildings1Layer1.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/buildings1.png")));
-        buildings1Layer2.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/buildings1.png")));
-        buildings2Layer1.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/buildings2.png")));
-        buildings2Layer2.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/buildings2.png")));
-        buildings3Layer1.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/buildings3.png")));
-        buildings3Layer2.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/buildings3.png")));
-        waterDynamicLayer1.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/waterDynamic.png")));
-        waterDynamicLayer2.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/waterDynamic.png")));
-        waterStaticLayer1.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/waterStatic2.png")));
-        waterStaticLayer2.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/waterStatic1.png")));
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/bg2.png")));
+        buildings1Layer1.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings1.png")));
+        buildings1Layer2.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings1.png")));
+        buildings2Layer1.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings2.png")));
+        buildings2Layer2.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings2.png")));
+        buildings3Layer1.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings3.png")));
+        buildings3Layer2.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings3.png")));
+        waterDynamicLayer1.setIcon(new ImageIcon(getClass().getResource("../graphics/waterDynamic.png")));
+        waterDynamicLayer2.setIcon(new ImageIcon(getClass().getResource("../graphics/waterDynamic.png")));
+        waterStaticLayer1.setIcon(new ImageIcon(getClass().getResource("../graphics/waterStatic2.png")));
+        waterStaticLayer2.setIcon(new ImageIcon(getClass().getResource("../graphics/waterStatic1.png")));
+        background.setIcon(new ImageIcon(getClass().getResource("../graphics/bg2.png")));
         
         // add jLabels to jPanel
-        jPanel1.add(waterStaticLayer1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 640, 100));        
-        jPanel1.add(waterDynamicLayer1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 100));        
-        jPanel1.add(waterDynamicLayer2, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 100));        
-        jPanel1.add(waterStaticLayer2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 640, 100));        
-        jPanel1.add(buildings1Layer1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 330));
-        jPanel1.add(buildings1Layer2, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 330));
-        jPanel1.add(buildings2Layer1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 330));
-        jPanel1.add(buildings2Layer2, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 330));
-        jPanel1.add(buildings3Layer1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 330));        
-        jPanel1.add(buildings3Layer2, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 0, 640, 330));                                
-        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 640, 480));        
+        jPanel1.add(waterStaticLayer1, new AbsoluteConstraints(0, 330, 640, 100));        
+        jPanel1.add(waterDynamicLayer1, new AbsoluteConstraints(640, 0, 640, 100));        
+        jPanel1.add(waterDynamicLayer2, new AbsoluteConstraints(640, 0, 640, 100));        
+        jPanel1.add(waterStaticLayer2, new AbsoluteConstraints(0, 330, 640, 100));        
+        jPanel1.add(buildings1Layer1, new AbsoluteConstraints(640, 0, 640, 330));
+        jPanel1.add(buildings1Layer2, new AbsoluteConstraints(640, 0, 640, 330));
+        jPanel1.add(buildings2Layer1, new AbsoluteConstraints(640, 0, 640, 330));
+        jPanel1.add(buildings2Layer2, new AbsoluteConstraints(640, 0, 640, 330));
+        jPanel1.add(buildings3Layer1, new AbsoluteConstraints(640, 0, 640, 330));        
+        jPanel1.add(buildings3Layer2, new AbsoluteConstraints(640, 0, 640, 330));                                
+        jPanel1.add(background, new AbsoluteConstraints(0, 0, 640, 480));        
                 
-        animation();
+        animation();        
+        
+        // creating digit
+        try{            
+            digit = new Digits(jPanel1, codeLabel, pointsLabel, character, nickname);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
         
+    /**
+     * Metoda, która jest odświeżana z częstotliwością 1/GAME_SPEED
+     * Odpowiada za koordynację i sterowania poruszającymi się warstwami
+     */
     public void animation(){
         Thread t;
         t = new Thread(){                
             @Override
             public void run(){
                 while(true){
+                    
                     try{
-                        sleep(GAME_SPEED);
-                        gameTime++;
-                        pointsLabel.setText(Integer.toString(points));
+                        sleep(GAME_SPEED);                       
+                    } catch(InterruptedException e){}
+                    
+                    gameTime++;                        
                         
-                        //--- ANIMATOR -------------------------------                        
-                        //--- after each                         
-                        if(gameTime/repeaterCounterChar == CHARACTER_REFRESH_TIME){
-                            if(animator == Animation.run){
-                                if(charXPos >= 48 && charYPos >= characterImg.getHeight() - 76){
-                                    charXPos = 0;
-                                    charYPos = 0;
-                                }
-                                else if(charXPos < characterImg.getWidth() - 48){
-                                    charXPos += 48;
-                                }                            
-                                else{
-                                    charXPos = 0;
-                                    charYPos += 76;
-                                }                                
+                    //--- ANIMATOR -------------------------------                                                     
+                    if(gameTime/repeaterCounterChar == CHARACTER_REFRESH_TIME){
+                        if(animator == Animation.run){
+                            if(charXPos >= 48 && charYPos >= characterImg.getHeight() - 76){
+                                charXPos = 0;
+                                charYPos = 0;
                             }
-                            else if(animator == Animation.slide){                                    
-                                charYPos = characterImg.getHeight() - 76;
-                                
-                                if(!canSlide){                                                                    
-                                    charXPos = 97;
-                                    canSlide = true;
-                                }
-                                else{
-                                    charXPos = 145;
-                                    canSlide = false;
-                                }
-                            }
-                            else if(animator == Animation.jump){
-                                charXPos = 48;
-                                charYPos = 152;
-                            }
-
-                            repeaterCounterChar++;
+                            else if(charXPos < characterImg.getWidth() - 48){
+                                charXPos += 48;
+                            }                            
+                            else{
+                                charXPos = 0;
+                                charYPos += 76;
+                            }                                
                         }
+                        else if(animator == Animation.slide){                                    
+                            charYPos = characterImg.getHeight() - 76;
 
-                        //------------------------------------------------------
-                        //------ JUMP
-                        //------------------------------------------------------
-                        if(gameTime/repeaterCounterJump == JUMP_REFRESH_TIME){
-                            repeaterCounterJump++;
-
-                            if(animator == Animation.jump){
-                                // jumping frame 
-                                charXPos = 48;
-                                charYPos = 152;
-                               
-                                if(character.getLocation().y > maxJumpHeight){          // is grounded?
-                                    jumpHeight -= gravity;
-                                    gravity -= 0.012;                    
-                                    character.setLocation(character.getLocation().x, (int)jumpHeight);
-                                }                                
-                                else if(character.getLocation().y <= maxJumpHeight){    // is jumping?
-                                    animator = Animation.fall;                                    
-                                    jumpHeight = maxJumpHeight;
-                                    gravity = 0.0;
-                                }
+                            if(!canSlide){                                                                    
+                                charXPos = 97;
+                                canSlide = true;
                             }
-                            else if(animator == Animation.fall){                                
-                                if(character.getLocation().y < minJumpHeight){          // is falling?
-                                    jumpHeight += gravity;
-                                    gravity += 0.012;                                
-                                    character.setLocation(character.getLocation().x, (int)jumpHeight);
-                                }                                                                
-                                else if(character.getLocation().y >= minJumpHeight){    // is grounded?
-                                    animator = Animation.run;
-                                    character.setLocation(character.getLocation().x, (int)minJumpHeight);
-                                    jumpHeight = 354.0;
-                                    gravity = 1.5;
-                                    grounded = true;
-                                }
+                            else{
+                                charXPos = 145;
+                                canSlide = false;
                             }
                         }
-
-                        //------------------------------------------------------
-                        //------ LAYER 1 BG
-                        //------------------------------------------------------                        
-                        if(gameTime/repeaterCounterLayer1 == LAYER1_REFRESH_TIME){
-                            repeaterCounterLayer1++;
-                            currLayer1Pos++;
-
-                            if(currLayer1Pos <= LAYERS_START_X){
-                                if(!swLayer1){
-                                    buildings1Layer1.setLocation(-currLayer1Pos, 0);
-                                    buildings1Layer2.setLocation(-currLayer1Pos + 640, 0);
-                                    waterDynamicLayer1.setLocation(-currLayer1Pos, 330);
-                                    waterDynamicLayer2.setLocation(-currLayer1Pos + 640, 330); 
-                                }
-                                else{
-                                    buildings1Layer1.setLocation(-currLayer1Pos + 640, 0);
-                                    buildings1Layer2.setLocation(-currLayer1Pos, 0);
-                                    waterDynamicLayer1.setLocation(-currLayer1Pos + 640, 330);
-                                    waterDynamicLayer2.setLocation(-currLayer1Pos, 330);                           
-                                }
-                            }
-                            else{ // swaping currently moving layers
-                                currLayer1Pos = 0;
-                                if(swLayer1)
-                                    swLayer1 = false;
-                                else
-                                    swLayer1 = true;
-                            }
+                        else if(animator == Animation.jump){
+                            charXPos = 48;
+                            charYPos = 152;
                         }
 
-                        //------------------------------------------------------
-                        //------ LAYER 2 BG
-                        //------------------------------------------------------
-                        if(gameTime/repeaterCounterLayer2 == LAYER2_REFRESH_TIME){
-                            repeaterCounterLayer2++;
-                            currLayer2Pos++;
-                            
-                            if(currLayer2Pos <= LAYERS_START_X){
-                                if(!swLayer2){
-                                    buildings2Layer1.setLocation(-currLayer2Pos, 0);
-                                    buildings2Layer2.setLocation(-currLayer2Pos + 640, 0);                                     
-                                }
-                                else {
-                                    buildings2Layer1.setLocation(-currLayer2Pos + 640, 0);
-                                    buildings2Layer2.setLocation(-currLayer2Pos, 0);                           
-                                }
-                            }
-                            else{ // swaping currently moving layer
-                                currLayer2Pos = 0;                            
-                                if(swLayer2)    
-                                    swLayer2 = false;
-                                else
-                                    swLayer2 = true;
-                            }
-                        }
-                        
-                        //------------------------------------------------------
-                        //------ LAYER 3 BG
-                        //------------------------------------------------------
-                        if(gameTime/repeaterCounterLayer3 == LAYER3_REFRESH_TIME){
-                            repeaterCounterLayer3++;
-                            currLayer3Pos++;
-                            
-                            
-                            if(currLayer3Pos <= LAYERS_START_X){
-                                if(!swLayer3){
-                                    buildings3Layer1.setLocation(-currLayer3Pos, 0);
-                                    buildings3Layer2.setLocation(-currLayer3Pos + 640, 0); 
-                                }
-                                else {
-                                    buildings3Layer1.setLocation(-currLayer3Pos + 640, 0);
-                                    buildings3Layer2.setLocation(-currLayer3Pos, 0);                           
-                                }
-                            }
-                            else{ // swaping currently moving layer
-                                currLayer3Pos = 0;                            
-                                if(swLayer3)
-                                    swLayer3 = false;
-                                else         
-                                    swLayer3 = true; // first (left) one will be after second (right) one
-                            }
-                        }
-
-                        // setting next frame of character movement animation
-                        character.setIcon(new javax.swing.ImageIcon(characterImg.getSubimage(charXPos, charYPos, 44, 76)));
+                        repeaterCounterChar++;
                     }
-                    catch(InterruptedException e){ 
-                        e.printStackTrace();
+
+                    //------------------------------------------------------
+                    //------ JUMP
+                    //------------------------------------------------------
+                    if(gameTime/repeaterCounterJump == JUMP_REFRESH_TIME){
+                        repeaterCounterJump++;
+
+                        if(animator == Animation.jump){
+                            // jumping frame 
+                            charXPos = 48;
+                            charYPos = 152;
+
+                            if(character.getLocation().y > maxJumpHeight){          // is grounded?
+                                jumpHeight -= gravity;
+                                gravity -= 0.012;                    
+                                character.setLocation(character.getLocation().x, (int)jumpHeight);
+                            }                                
+                            else if(character.getLocation().y <= maxJumpHeight){    // is jumping?
+                                animator = Animation.fall;                                    
+                                jumpHeight = maxJumpHeight;
+                                gravity = 0.0;
+                            }
+                        }
+                        else if(animator == Animation.fall){                                
+                            if(character.getLocation().y < minJumpHeight){          // is falling?
+                                jumpHeight += gravity;
+                                gravity += 0.012;                                
+                                character.setLocation(character.getLocation().x, (int)jumpHeight);
+                            }                                                                
+                            else if(character.getLocation().y >= minJumpHeight){    // is grounded?
+                                animator = Animation.run;
+                                character.setLocation(character.getLocation().x, (int)minJumpHeight);
+                                jumpHeight = 354.0;
+                                gravity = 1.5;
+                                grounded = true;
+                            }
+                        }
                     }
+
+                    //------------------------------------------------------
+                    //------ LAYER 1 BG + CHECK STAGE
+                    //------------------------------------------------------                        
+                    if(gameTime/repeaterCounterLayer1 == LAYER1_REFRESH_TIME){
+                        repeaterCounterLayer1++;
+                        currLayer1Pos++;
+
+                        //--------------------------------------------------
+                        //-- cykliczne sprawdzanie czy można zmienić 
+                        //-- widoczność elementów interfejsu graficznego
+                        if(currentStage.canChange){                                
+                            checkStage();                                
+                        }
+
+                        if(currLayer1Pos <= LAYERS_START_X){
+                            if(!swLayer1){
+                                buildings1Layer1.setLocation(-currLayer1Pos, 0);
+                                buildings1Layer2.setLocation(-currLayer1Pos + 640, 0);
+                                waterDynamicLayer1.setLocation(-currLayer1Pos, 330);
+                                waterDynamicLayer2.setLocation(-currLayer1Pos + 640, 330); 
+                            }
+                            else{
+                                buildings1Layer1.setLocation(-currLayer1Pos + 640, 0);
+                                buildings1Layer2.setLocation(-currLayer1Pos, 0);
+                                waterDynamicLayer1.setLocation(-currLayer1Pos + 640, 330);
+                                waterDynamicLayer2.setLocation(-currLayer1Pos, 330);                           
+                            }
+                        }
+                        else{ // swaping currently moving layers
+                            currLayer1Pos = 0;
+                            swLayer1 = !swLayer1;
+                        }
+                    }
+
+                    //------------------------------------------------------
+                    //------ LAYER 2 BG
+                    //------------------------------------------------------
+                    if(gameTime/repeaterCounterLayer2 == LAYER2_REFRESH_TIME){
+                        repeaterCounterLayer2++;
+                        currLayer2Pos++;
+
+                        if(currLayer2Pos <= LAYERS_START_X){
+                            if(!swLayer2){
+                                buildings2Layer1.setLocation(-currLayer2Pos, 0);
+                                buildings2Layer2.setLocation(-currLayer2Pos + 640, 0);                                     
+                            }
+                            else {
+                                buildings2Layer1.setLocation(-currLayer2Pos + 640, 0);
+                                buildings2Layer2.setLocation(-currLayer2Pos, 0);                           
+                            }
+                        }
+                        else{ // swaping currently moving layer
+                            currLayer2Pos = 0;                            
+                            swLayer2 = !swLayer2;
+                        }
+                    }
+
+                    //------------------------------------------------------
+                    //------ LAYER 3 BG
+                    //------------------------------------------------------
+                    if(gameTime/repeaterCounterLayer3 == LAYER3_REFRESH_TIME){
+                        repeaterCounterLayer3++;
+                        currLayer3Pos++;
+
+
+                        if(currLayer3Pos <= LAYERS_START_X){
+                            if(!swLayer3){
+                                buildings3Layer1.setLocation(-currLayer3Pos, 0);
+                                buildings3Layer2.setLocation(-currLayer3Pos + 640, 0); 
+                            }
+                            else {
+                                buildings3Layer1.setLocation(-currLayer3Pos + 640, 0);
+                                buildings3Layer2.setLocation(-currLayer3Pos, 0);                           
+                            }
+                        }
+                        else{ // swaping currently moving layer
+                            currLayer3Pos = 0;                            
+                            swLayer3 = !swLayer3;
+                        }
+                    }
+
+                    // setting next frame of character movement animation
+                    character.setIcon(new ImageIcon(characterImg.getSubimage(charXPos, charYPos, 44, 76)));
                 }
             }
         };
         t.start();
     }
-    
-    
-    //--------------------------------------------------------------------------
-    //--- set font for all Jobcjects
-    //--------------------------------------------------------------------------
+        
+    /**
+    * Metoda ustawia czcionkę dla wszystkich JObiektów
+    */        
     private void setUpFont(){
         try {
             URL url = getClass().getResource("../graphics/kongtext.ttf");            
@@ -344,13 +425,12 @@ public class MainFrame extends javax.swing.JFrame {
         } catch(FontFormatException e) {
             e.printStackTrace();
         }
-    }
+    }    
     
-    
-    //--------------------------------------------------------------------------
-    //--- visible of buttons on different stages
-    //--------------------------------------------------------------------------   
-    public static void checkStage(){             
+    /**
+    * ustawianie widoczność dla przycisków na różnych etapach gry
+    */
+    public void checkStage(){             
         if(currentStage.equals(GameStage.menu)){
             startButton.setVisible(true);
             nickButton.setVisible(true);
@@ -383,11 +463,12 @@ public class MainFrame extends javax.swing.JFrame {
                 codeLabel.setVisible(false);
             }
         }
+        
+        currentStage.canChange = false;
     }
-   
-    
+       
     //--------------------------------------------------------------------------
-    //--- GENERATED CODE
+    //--- Wygenerowany kod
     //--------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -405,7 +486,7 @@ public class MainFrame extends javax.swing.JFrame {
         menuBackground = new javax.swing.JLabel();
         viniete = new javax.swing.JLabel();
         character = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        gif = new javax.swing.JLabel();
         pointsLabel = new javax.swing.JTextField();
         codeLabel = new javax.swing.JTextField();
         ground = new javax.swing.JLabel();
@@ -625,9 +706,8 @@ public class MainFrame extends javax.swing.JFrame {
         character.setPreferredSize(new java.awt.Dimension(44, 76));
         jPanel1.add(character, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 350, -1, -1));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/moze.gif"))); // NOI18N
-        jLabel1.setPreferredSize(new java.awt.Dimension(640, 480));
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        gif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/moze.gif"))); // NOI18N
+        jPanel1.add(gif, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pointsLabel.setBackground(new java.awt.Color(0, 0, 0));
         pointsLabel.setForeground(new java.awt.Color(245, 245, 245));
@@ -665,11 +745,15 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
     
     //--------------------------------------------------------------------------
-    //--- BUTTONS 
+    //--- Przyciski
     //--------------------------------------------------------------------------
+    
+    /**
+     * Ustawia widoczność przycisków po wściśnieciu przycisku
+     * @param evt nie używany
+     */
     private void startButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseClicked
         startButton.setVisible(false);
         nickButton.setVisible(false);
@@ -681,31 +765,51 @@ public class MainFrame extends javax.swing.JFrame {
         backButton.setVisible(true);
     }//GEN-LAST:event_startButtonMouseClicked
 
+    /**
+     * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
+     * @param evt 
+     */
     private void startButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseEntered
         onMouseEnter(startButton);
     }//GEN-LAST:event_startButtonMouseEntered
 
+    /**
+     * Obsługa wyjścia myszy z pola przycisku
+     * @param evt nie używany
+     */
     private void startButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseExited
         onMouseExit(startButton);
     }//GEN-LAST:event_startButtonMouseExited
 
+    /**
+     * Kliknięcie przycisku nickButton powoduje wywołanie okna zmiany pseudonimu
+     * @param evt nie używany
+     */
     private void nickButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nickButtonMouseClicked
-        // creating internal frame - typing nickname        
-        try {
-            new Nickname(nickname);
-        }catch(Exception ex){
-            ex.printStackTrace();
-        } 
+        // creating internal frame - typing nickname                
+        new Nickname(nickname, nickButton);        
     }//GEN-LAST:event_nickButtonMouseClicked
 
+    /**
+     * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
+     * @param evt nie używany
+     */
     private void nickButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nickButtonMouseEntered
         onMouseEnter(nickButton);
     }//GEN-LAST:event_nickButtonMouseEntered
 
+    /**
+     * Obsługa wyjścia myszy z pola przycisku
+     * @param evt nie używany
+     */
     private void nickButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nickButtonMouseExited
         onMouseExit(nickButton);
     }//GEN-LAST:event_nickButtonMouseExited
 
+    /**
+     * Kliknięcie przycisku otworzy dodatkowe okno wyświetlające listę 20-stu najlepszych wyników
+     * @param evt nie używany
+     */
     private void highScoreButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_highScoreButtonMouseClicked
         // creating internal frame - displaying best 20 scores
         try {
@@ -714,73 +818,133 @@ public class MainFrame extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_highScoreButtonMouseClicked
-
+    
+    /**
+     * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
+     * @param evt nie używany
+     */    
     private void highScoreButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_highScoreButtonMouseEntered
         onMouseEnter(highScoreButton);
     }//GEN-LAST:event_highScoreButtonMouseEntered
 
+    /**
+     * Obsługa wyjścia myszy z pola przycisku
+     * @param evt nie używany
+     */
     private void highScoreButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_highScoreButtonMouseExited
         onMouseExit(highScoreButton);
     }//GEN-LAST:event_highScoreButtonMouseExited
 
+    /**
+     * Kliknięcie przycisku spowoduje wyjście z aplikacji
+     * @param evt nie używany
+     */
     private void exitButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitButtonMouseClicked
         System.exit(0);
     }//GEN-LAST:event_exitButtonMouseClicked
 
+    /**
+     * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
+     * @param evt nie używany
+     */
     private void exitButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitButtonMouseEntered
         onMouseEnter(exitButton);
     }//GEN-LAST:event_exitButtonMouseEntered
 
+    /**
+     * Obsługa wyjścia myszy z pola przycisku
+     * @param evt nie używany
+     */
     private void exitButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitButtonMouseExited
         onMouseExit(exitButton);
     }//GEN-LAST:event_exitButtonMouseExited
-
     
     //--------------------------------------------------------------------------
-    //--- LEVEL SELECTION
+    //--- Wybór poziomu
     //--------------------------------------------------------------------------
+    
+    /**
+     * Aktualizacja stanu aplikacji oraz ustawienie poziomu trudności na łatwy
+     * @param evt nie używany
+     */
     private void easyButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_easyButtonMouseClicked
         currentStage = GameStage.stage1;        
-        mainWindow.checkStage();
-        digit.velocityX = 2; 
+        currentStage.changeFlag(true);        
+        digit.setVelocity(2);
     }//GEN-LAST:event_easyButtonMouseClicked
 
+    /**
+     * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
+     * @param evt nie używany
+     */
     private void easyButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_easyButtonMouseEntered
         onMouseEnter(easyButton);
     }//GEN-LAST:event_easyButtonMouseEntered
 
+    /**
+     * Obsługa wyjścia myszy z pola przycisku
+     * @param evt nie używany
+     */
     private void easyButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_easyButtonMouseExited
         onMouseExit(easyButton);
     }//GEN-LAST:event_easyButtonMouseExited
 
+    /**
+     * Aktualizacja stanu aplikacji oraz ustawienie poziomu trudności na średni
+     * @param evt nie używany
+     */
     private void normalButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_normalButtonMouseClicked
         currentStage = GameStage.stage1;        
-        mainWindow.checkStage();
-        digit.velocityX = 3;
+        currentStage.changeFlag(true);
+        digit.setVelocity(3);
     }//GEN-LAST:event_normalButtonMouseClicked
 
+    /**
+     * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
+     * @param evt nie używany
+     */
     private void normalButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_normalButtonMouseEntered
         onMouseEnter(normalButton);
     }//GEN-LAST:event_normalButtonMouseEntered
 
+    /**
+     * Obsługa wyjścia myszy z pola przycisku
+     * @param evt nie używany
+     */
     private void normalButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_normalButtonMouseExited
         onMouseExit(normalButton);
     }//GEN-LAST:event_normalButtonMouseExited
 
+    /**
+     * Aktualizacja stanu aplikacji oraz ustawienie poziomu trudności na trudny
+     * @param evt nie używany
+     */
     private void hardButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hardButtonMouseClicked
-        currentStage = GameStage.stage1;        
-        mainWindow.checkStage();
-        digit.velocityX = 4; 
+        currentStage = GameStage.stage1;
+        currentStage.changeFlag(true);
+        digit.setVelocity(4);
     }//GEN-LAST:event_hardButtonMouseClicked
 
+    /**
+     * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
+     * @param evt nie używany
+     */
     private void hardButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hardButtonMouseEntered
         onMouseEnter(hardButton);
     }//GEN-LAST:event_hardButtonMouseEntered
 
+    /**
+     * Obsługa wyjścia myszy z pola przycisku
+     * @param evt nie używany
+     */
     private void hardButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hardButtonMouseExited
         onMouseExit(hardButton);
     }//GEN-LAST:event_hardButtonMouseExited
 
+    /**
+     * Kliknięcie przycisku back spowoduje przeniesienie do głównego menu gry
+     * @param evt nie używany
+     */
     private void backButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseClicked
         startButton.setVisible(true);
         nickButton.setVisible(true);
@@ -792,17 +956,30 @@ public class MainFrame extends javax.swing.JFrame {
         backButton.setVisible(false);
     }//GEN-LAST:event_backButtonMouseClicked
 
+    /**
+     * Najechanie na przycisk wywoła metodę do zmiany parametrów przycisku
+     * @param evt nie używany
+     */
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
         onMouseEnter(backButton);
     }//GEN-LAST:event_backButtonMouseEntered
 
+    /**
+     * Obsługa wyjścia myszy z pola przycisku
+     * @param evt nie używany
+     */
     private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
         onMouseExit(backButton);
     }//GEN-LAST:event_backButtonMouseExited
 
     //--------------------------------------------------------------------------
-    //--- FORM KEY
+    //--- Klawisz na formie
     //--------------------------------------------------------------------------
+    
+    /**
+     * Obsługa klikniętych klawiszy ze sprawdzaniem warunków danego trybu rozgrywki
+     * @param evt zbiera informacje o stanach klawiszy
+     */
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         int x = evt.getKeyCode();
                 
@@ -810,16 +987,16 @@ public class MainFrame extends javax.swing.JFrame {
             System.exit(0);
         }
         
-        if(currentStage.equals(MainFrame.GameStage.stage1) || currentStage.equals(MainFrame.GameStage.stage2)){
+        if(currentStage.equals(GameStage.stage1) || currentStage.equals(GameStage.stage2)){
             
             // back to menu from current game stage
             if(x == KeyEvent.VK_ESCAPE){
                 codeLabel.setText("");
                 digit.clear();
                 currentStage = GameStage.menu;
-                mainWindow.checkStage();                
+                checkStage();                
                 digit.velocityX = 0;
-                points = 0;
+                digit.points = 0;
             }
                         
             if(animator == Animation.run){                
@@ -838,6 +1015,10 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formKeyPressed
 
+    /**
+     * Obsługa puszczonego klawisza
+     * @param evt zbiera informacje o stanach klawiszy
+     */
     private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
         int x = evt.getKeyCode();
     
@@ -850,25 +1031,35 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_formKeyReleased
-
     
     //--------------------------------------------------------------------------
-    //--- BUTTONS' TEXTURE
+    //--- Tekstury przycisków
     //--------------------------------------------------------------------------
+    
+    /**
+     * Metoda zmieniająca parametry przycisku po najechaniu myszką
+     * @param btn przesłany JButton, którego opcje będą zmieniać
+     * 
+     */
     private void onMouseEnter(JButton btn){
         btn.setForeground(new java.awt.Color(255, 143, 159));
         btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/btn2.png")));
     }
 
+    /**
+     * Metoda zmieniająca parametry przycisku po wyjściu myszy z jego obszaru
+     * @param btn przesłany JButton, którego opcje będą zmieniać
+     */
     private void onMouseExit(JButton btn){
         btn.setForeground(new java.awt.Color(245, 245, 245));
         btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/btn.png")));
     }
-
     
-    //--------------------------------------------------------------------------
-    //--- MAIN
-    //--------------------------------------------------------------------------
+    /**
+     * Główna metoda aplikacji
+     * odpowiada za wywołanie początkowe okna
+     * @param args parametry podane w tablicy są wywoływane z metodą main     
+     */
     public static void main(String args[]) {
 
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -893,43 +1084,29 @@ public class MainFrame extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    mainWindow = new MainFrame();                    
-                    mainWindow.setVisible(true);
-                    
-                    // setting "menu" game stage
-                    mainWindow.checkStage();
-                    
-                    // firstly - generating internal window to type player's nickname!
-                    try{
-                        new Nickname(nickname);
-                    }catch(Exception ex){} 
-                    
-                } catch (IOException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        java.awt.EventQueue.invokeLater(new Runnable() {            
+            public void run() {                                                
+                new MainFrame().setVisible(true);                
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public static javax.swing.JButton backButton;
-    public static javax.swing.JLabel character;
-    public static javax.swing.JTextField codeLabel;
-    public static javax.swing.JButton easyButton;
-    public static javax.swing.JButton exitButton;
+    public javax.swing.JButton backButton;
+    public javax.swing.JLabel character;
+    public javax.swing.JTextField codeLabel;
+    public javax.swing.JButton easyButton;
+    public javax.swing.JButton exitButton;
+    private javax.swing.JLabel gif;
     private javax.swing.JLabel ground;
-    public static javax.swing.JButton hardButton;
-    public static javax.swing.JButton highScoreButton;
-    private javax.swing.JLabel jLabel1;
-    public static javax.swing.JPanel jPanel1;
-    private static javax.swing.JLabel menuBackground;
-    public static javax.swing.JButton nickButton;
-    public static javax.swing.JButton normalButton;
-    public static javax.swing.JTextField pointsLabel;
-    public static javax.swing.JButton startButton;
+    public javax.swing.JButton hardButton;
+    public javax.swing.JButton highScoreButton;
+    public javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel menuBackground;
+    public javax.swing.JButton nickButton;
+    public javax.swing.JButton normalButton;
+    public javax.swing.JTextField pointsLabel;
+    public javax.swing.JButton startButton;
     private javax.swing.JLabel viniete;
     // End of variables declaration//GEN-END:variables
 }
