@@ -706,7 +706,7 @@ public final class MainFrame extends javax.swing.JFrame {
         character.setPreferredSize(new java.awt.Dimension(44, 76));
         jPanel1.add(character, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 350, -1, -1));
 
-        gif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/moze.gif"))); // NOI18N
+        gif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/vhs.gif"))); // NOI18N
         jPanel1.add(gif, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pointsLabel.setBackground(new java.awt.Color(0, 0, 0));

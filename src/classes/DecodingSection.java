@@ -54,7 +54,10 @@ public class DecodingSection extends AbstractDialog{
     
     /**
      * Ustawia parametry obiektów okna dialogowego oraz wyświetla zebrany kod do dekodowania
-     * @param _collectedCode     
+     * @param collectedCode zebrany ciąg 12 bitów
+     * @param points parametr potrzebny do aktualizacji i dodania bonusu do zebranych punktów
+     * @param level parametr potrzebny do wyświetlenia aktualnego numeru poziomu
+     * @param nickname parametr potrzebny do przesłania dla okna GameOver w momencie przegrania tury
      */
     public DecodingSection(String collectedCode, int points, int level, String nickname){
         super(640, 480);
