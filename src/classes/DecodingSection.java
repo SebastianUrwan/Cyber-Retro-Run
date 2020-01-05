@@ -32,10 +32,10 @@ public class DecodingSection extends AbstractDialog{
     private int charCounter             = 0;
     
     /** pole przechowuje liczbę pozostałych bonusowych punktów */
-    private int bonusPoint              = 1000;
+    private int bonusPoints             = 300;
     
     /** pole przechowuje maksymalną liczbę bonusowych punktów */
-    final private int MAX_BONUS         = 1000;
+    final private int MAX_BONUS         = 300;
     
     /** pole przechowujące tekst z zebranym kodem przesłany parametrem od klasy Digits */
     private String collectedCode        = "";
@@ -47,7 +47,10 @@ public class DecodingSection extends AbstractDialog{
     public int copyLevel                = 0;
         
     /** pole przechowujące aktualną liczbę punktów przesłaną z klasy Digits */
-    public int copyPoints               = 0;
+    public int copyPoints;
+    
+    /** pole przechowujące ostateczną bonusową liczbę punków */
+    public int totalBonus;
     
     /** pole przechowujące aktualny pseudonim gracza przesłany z klasy Digits */
     public String nickname              = "";    
@@ -111,10 +114,10 @@ public class DecodingSection extends AbstractDialog{
                 while(true){
                     try{
                         if(isTyping){               
-                            if(bonusPoint > 0){
+                            if(bonusPoints > 0){
                                 sleep(100);
-                                bonusPoint--;
-                                pointsLabel.setText(Integer.toString(bonusPoint));  // update displayed left points
+                                bonusPoints--;
+                                pointsLabel.setText(Integer.toString(bonusPoints));  // update displayed left points
                             }
                             else{                               
                                 logicStageDefeat();                             // time is exceeded
@@ -168,7 +171,7 @@ public class DecodingSection extends AbstractDialog{
             counter += 4;                                                       // move to the next 4 bit of collected binary code
         }
         
-        //System.out.println(validCode[0] + validCode[1] + validCode[2]);
+        System.out.println(validCode[0] + validCode[1] + validCode[2]);
     }
     
     /**
@@ -179,20 +182,28 @@ public class DecodingSection extends AbstractDialog{
             MainFrame.currentStage = GameStage.stage1;
             MainFrame.currentStage.changeFlag(true);
             copyLevel++;            
-            copyPoints += bonusPoint;
-            bonusPoint = MAX_BONUS;
+                        
+            totalBonus = bonusPoints;                                    
+            bonusPoints = MAX_BONUS;
             dispose();                                                          // remove currently diplayed internal frame = next level
         }
         else{
             logicStageDefeat();
         }
     }
+    
+    /**     
+     * @return metoda zwraca uzyskane bonusowe punkty
+     */
+    public int getBonusPoints(){
+        return totalBonus;
+    }
         
     /**
      * Metoda ustawiająca parametry po podaniu błędej odpowiedzi
      */    
     private void logicStageDefeat(){                
-        bonusPoint = MAX_BONUS;                                                 // reseting parameters
+        bonusPoints = MAX_BONUS;                                                 // reseting parameters
         isTyping = false;
         dispose();                                                              // remove currently diplayed internal frame
         MainFrame.currentStage = GameStage.menu;

@@ -95,6 +95,9 @@ public class Digits extends JLabel implements ActionListener{
     /** zegar, który automatycznie będzie wywoływał metodę actionPerformed */
     private Timer timer;        
 
+    /** obiekt dodatkowego okna części logicznej */
+    public DecodingSection decodeFrame;        
+    
     /**
      * Konstruktor ustawia wartości parametrów przesłanych obiektów oraz ustala opóźnienie zegara (z takim opóźnieniem będzie aktualizowana pozycja cyfry
      * @param jpanel kontener do którego będzie dodany obiekt cyfry
@@ -138,7 +141,7 @@ public class Digits extends JLabel implements ActionListener{
      */
     private void generateDigit(){
         int min = 0;
-        int max = 2;
+        int max = 10;
         generatedDigit = (int)(Math.random() * (max - min));        
        
         // setting proper part of graphics to jLabel
@@ -170,13 +173,15 @@ public class Digits extends JLabel implements ActionListener{
             codeDisplay.setText(codeToString);
                         
             if(code.size() == 12){                                              // enough binary code length = go to decoding section (stage2)
-                currentDigitX = START_X;                                               // set digit posiotion on right of the window frame
+                currentDigitX = START_X;                                        // set digit posiotion on right of the window frame
                 MainFrame.currentStage = GameStage.stage2;
                 MainFrame.currentStage.changeFlag(true);
                 
                 codeToSend = codeToString;
                 clear();                                                        // reseting parametrs when player returns from stage2                
-                new DecodingSection(codeToSend, points, level, nickname);                
+                decodeFrame = new DecodingSection(codeToSend, points, level, nickname);                                
+                points += decodeFrame.getBonusPoints();
+                this.setPoints(points);                
             }                  
         }        
     }
@@ -194,9 +199,8 @@ public class Digits extends JLabel implements ActionListener{
     /**
      * Metoda aktualizuje wartość punktów i wyświetla nową wartość
      */
-    public void setPoints(){
-        this.points += 10;        
-        this.pointsDisplay.setText(Integer.toString(points));
+    public void setPoints(int pts){
+        this.pointsDisplay.setText(Integer.toString(pts));
     }
     
     /**
@@ -219,11 +223,13 @@ public class Digits extends JLabel implements ActionListener{
 
             if(areaA.intersects(areaB.getBounds2D())){                          // checking collision between digit and character
                 if(generatedDigit >= 0 && generatedDigit <= 1){                    
+                    this.points += 10;
+                    setPoints(this.points);
+                    
                     addCode();
                     canEnter = false;                                           // ONLY ONCE PLAYER CAN ENTER CURRENT DIGIT
                     currentDigitX = START_X;
-                    setLocation(currentDigitX, currentDigitY);
-                    setPoints();
+                    setLocation(currentDigitX, currentDigitY);                    
                     generatePosition();                                         // new parameters for the next digit
                     generateDigit();                                            
                     new PlaySound("collect");                                   // sound of colleting digit

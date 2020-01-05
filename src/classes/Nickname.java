@@ -75,13 +75,20 @@ public class Nickname extends AbstractDialog{
         }         
     }
     
+    /**     
+     * @return zwraca wpisany pseudonik w postaci łańcucha znaków
+     */
+    public String getNickname(){
+        return this.nickname;
+    }
+    
     /**
      * Implementacja metody abstrakcyjnej - aktualizacja wpisanego pseudonimu i zamknięcie dodatkowego okna
      * @param evt nie używany
      */
     @Override
     public void buttonMouseClicked(MouseEvent evt) {                                      
-        this.nickname = textField.getText();        
+        this.nickname = textField.getText();
         this.nicknameButton.setText(textField.getText());
         dispose();
     }                                        

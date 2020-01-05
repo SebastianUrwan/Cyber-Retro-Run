@@ -24,6 +24,9 @@ public final class MainFrame extends javax.swing.JFrame {
     /** obiekt poruszającej się cyfry */
     public Digits digit;        
     
+    /** obiekt okna dialogowego do wpisania pseudonimu */
+    public Nickname nickWindow;
+    
     /** grafika z klatkami animacji biegu i kucania bohatera */
     BufferedImage characterImg;
     
@@ -443,6 +446,7 @@ public final class MainFrame extends javax.swing.JFrame {
             menuBackground.setVisible(true);
             pointsLabel.setVisible(false);
             codeLabel.setVisible(false);
+                        
         }else if(currentStage.equals(GameStage.stage1) || currentStage.equals(GameStage.stage2)){
             startButton.setVisible(false);
             nickButton.setVisible(false);
@@ -787,7 +791,10 @@ public final class MainFrame extends javax.swing.JFrame {
      */
     private void nickButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nickButtonMouseClicked
         // creating internal frame - typing nickname                
-        new Nickname(nickname, nickButton);        
+        nickWindow = new Nickname(nickname, nickButton);
+        this.nickname = nickWindow.getNickname();
+        digit.nickname = this.nickname;
+        System.out.println(nickname);
     }//GEN-LAST:event_nickButtonMouseClicked
 
     /**
