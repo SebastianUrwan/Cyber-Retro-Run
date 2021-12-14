@@ -73,7 +73,7 @@ public class DecodingSection extends AbstractDialog{
         codeAid.setAlignmentX(Component.CENTER_ALIGNMENT);        
         codeAid.setFocusable(false);
         codeAid.setHorizontalTextPosition(SwingConstants.CENTER);        
-        codeAid.setIcon(new ImageIcon(getClass().getResource("../graphics/codeAid.png")));
+        codeAid.setIcon(new ImageIcon(getClass().getResource("graphics/codeAid.png")));
         
         pointsLabel.setBackground(new java.awt.Color(0, 0, 0));
         pointsLabel.setForeground(new java.awt.Color(245, 245, 245));
