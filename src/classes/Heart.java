@@ -12,7 +12,7 @@ import javax.swing.*;
 public class Heart extends JLabel{
 
     /** wczytana grafika z sercami */
-    BufferedImage img = ImageIO.read(MainFrame.class.getResourceAsStream("../graphics/hearts2.png"));
+    BufferedImage img = ImageIO.read(MainFrame.class.getResourceAsStream("graphics/hearts2.png"));
     
     /** pozycja X lokalizacji etykiety */
     final public int labelX = 283;

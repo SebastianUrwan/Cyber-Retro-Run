@@ -18,7 +18,7 @@ import org.netbeans.lib.awtextra.AbsoluteConstraints;
 public class Digits extends JLabel implements ActionListener{
         
     /** przechowuje grafikę zawierającą wszystkie cyfry od 0 do 9 - powoduje uniknięcie potrzeby wczytywania wielu grafik */
-    BufferedImage digitImg = ImageIO.read(MainFrame.class.getResourceAsStream("../graphics/digits.png"));
+    BufferedImage digitImg = ImageIO.read(MainFrame.class.getResourceAsStream("graphics/digits.png"));
     
     /** obiekt odpowiedzialny za wyświetlania grafiki prezentującej aktualną liczbę żyć */
     public Heart heart;

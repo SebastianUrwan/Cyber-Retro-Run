@@ -79,7 +79,7 @@ public abstract class AbstractDialog extends JDialog{
     public void setUpButton(){
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setForeground(whiteColour);        
-        button.setIcon(new ImageIcon(getClass().getResource("../graphics/btn.png"))); // NOI18N        
+        button.setIcon(new ImageIcon(getClass().getResource("graphics/btn.png"))); // NOI18N        
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -114,7 +114,7 @@ public abstract class AbstractDialog extends JDialog{
      */
     private void buttonMouseEntered(MouseEvent evt) {
         button.setForeground(redColour);
-        button.setIcon(new ImageIcon(getClass().getResource("../graphics/btn2.png")));
+        button.setIcon(new ImageIcon(getClass().getResource("graphics/btn2.png")));
     }                                      
 
     /**
@@ -123,7 +123,7 @@ public abstract class AbstractDialog extends JDialog{
      */
     private void buttonMouseExited(java.awt.event.MouseEvent evt){
         button.setForeground(whiteColour);
-        button.setIcon(new ImageIcon(getClass().getResource("../graphics/btn.png")));
+        button.setIcon(new ImageIcon(getClass().getResource("graphics/btn.png")));
     } 
         
     /**
@@ -187,7 +187,7 @@ public abstract class AbstractDialog extends JDialog{
      */
     public void setUpFont(){
         try {            
-            fontUrl = getClass().getResource("../graphics/kongtext.ttf");
+            fontUrl = getClass().getResource("graphics/kongtext.ttf");
             retroFont = Font.createFont(Font.TRUETYPE_FONT, new File(fontUrl.getPath())).deriveFont(12f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();            
             ge.registerFont(retroFont);                                    

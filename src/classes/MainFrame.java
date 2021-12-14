@@ -165,7 +165,7 @@ public final class MainFrame extends javax.swing.JFrame {
     public MainFrame(){
         initComponents();        
         try {    
-            characterImg = ImageIO.read(MainFrame.class.getResourceAsStream("../graphics/spriteSheet.png"));
+            characterImg = ImageIO.read(MainFrame.class.getResourceAsStream("graphics/spriteSheet.png"));
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -190,17 +190,17 @@ public final class MainFrame extends javax.swing.JFrame {
         background              = new javax.swing.JLabel();
 
         // setting jLabels' icons
-        buildings1Layer1.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings1.png")));
-        buildings1Layer2.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings1.png")));
-        buildings2Layer1.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings2.png")));
-        buildings2Layer2.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings2.png")));
-        buildings3Layer1.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings3.png")));
-        buildings3Layer2.setIcon(new ImageIcon(getClass().getResource("../graphics/buildings3.png")));
-        waterDynamicLayer1.setIcon(new ImageIcon(getClass().getResource("../graphics/waterDynamic.png")));
-        waterDynamicLayer2.setIcon(new ImageIcon(getClass().getResource("../graphics/waterDynamic.png")));
-        waterStaticLayer1.setIcon(new ImageIcon(getClass().getResource("../graphics/waterStatic2.png")));
-        waterStaticLayer2.setIcon(new ImageIcon(getClass().getResource("../graphics/waterStatic1.png")));
-        background.setIcon(new ImageIcon(getClass().getResource("../graphics/bg2.png")));
+        buildings1Layer1.setIcon(new ImageIcon(getClass().getResource("graphics/buildings1.png")));
+        buildings1Layer2.setIcon(new ImageIcon(getClass().getResource("graphics/buildings1.png")));
+        buildings2Layer1.setIcon(new ImageIcon(getClass().getResource("graphics/buildings2.png")));
+        buildings2Layer2.setIcon(new ImageIcon(getClass().getResource("graphics/buildings2.png")));
+        buildings3Layer1.setIcon(new ImageIcon(getClass().getResource("graphics/buildings3.png")));
+        buildings3Layer2.setIcon(new ImageIcon(getClass().getResource("graphics/buildings3.png")));
+        waterDynamicLayer1.setIcon(new ImageIcon(getClass().getResource("graphics/waterDynamic.png")));
+        waterDynamicLayer2.setIcon(new ImageIcon(getClass().getResource("graphics/waterDynamic.png")));
+        waterStaticLayer1.setIcon(new ImageIcon(getClass().getResource("graphics/waterStatic2.png")));
+        waterStaticLayer2.setIcon(new ImageIcon(getClass().getResource("graphics/waterStatic1.png")));
+        background.setIcon(new ImageIcon(getClass().getResource("graphics/bg2.png")));
         
         // add jLabels to jPanel
         jPanel1.add(waterStaticLayer1, new AbsoluteConstraints(0, 330, 640, 100));        
@@ -409,7 +409,7 @@ public final class MainFrame extends javax.swing.JFrame {
     */        
     private void setUpFont(){
         try {
-            URL url = getClass().getResource("../graphics/kongtext.ttf");            
+            URL url = getClass().getResource("graphics/kongtext.ttf");            
             Font retroFont = Font.createFont(Font.TRUETYPE_FONT, new File(url.getPath())).deriveFont(12f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(retroFont);
@@ -510,7 +510,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         startButton.setForeground(new java.awt.Color(245, 245, 245));
-        startButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/btn.png"))); // NOI18N
+        startButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/btn.png"))); // NOI18N
         startButton.setText("start");
         startButton.setBorderPainted(false);
         startButton.setContentAreaFilled(false);
@@ -534,7 +534,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jPanel1.add(startButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, -1, -1));
 
         nickButton.setForeground(new java.awt.Color(245, 245, 245));
-        nickButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/btn.png"))); // NOI18N
+        nickButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/btn.png"))); // NOI18N
         nickButton.setText("player1");
         nickButton.setBorderPainted(false);
         nickButton.setContentAreaFilled(false);
@@ -558,7 +558,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jPanel1.add(nickButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, -1, -1));
 
         highScoreButton.setForeground(new java.awt.Color(245, 245, 245));
-        highScoreButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/btn.png"))); // NOI18N
+        highScoreButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/btn.png"))); // NOI18N
         highScoreButton.setText("scores");
         highScoreButton.setBorderPainted(false);
         highScoreButton.setContentAreaFilled(false);
@@ -582,7 +582,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jPanel1.add(highScoreButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 400, -1, -1));
 
         exitButton.setForeground(new java.awt.Color(245, 245, 245));
-        exitButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/btn.png"))); // NOI18N
+        exitButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/btn.png"))); // NOI18N
         exitButton.setText("exit");
         exitButton.setBorderPainted(false);
         exitButton.setContentAreaFilled(false);
@@ -606,7 +606,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jPanel1.add(exitButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 440, -1, -1));
 
         easyButton.setForeground(new java.awt.Color(245, 245, 245));
-        easyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/btn.png"))); // NOI18N
+        easyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/btn.png"))); // NOI18N
         easyButton.setText("easy");
         easyButton.setBorderPainted(false);
         easyButton.setContentAreaFilled(false);
@@ -630,7 +630,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jPanel1.add(easyButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, -1, -1));
 
         normalButton.setForeground(new java.awt.Color(245, 245, 245));
-        normalButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/btn.png"))); // NOI18N
+        normalButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/btn.png"))); // NOI18N
         normalButton.setText("normal");
         normalButton.setBorderPainted(false);
         normalButton.setContentAreaFilled(false);
@@ -654,7 +654,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jPanel1.add(normalButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, -1, -1));
 
         hardButton.setForeground(new java.awt.Color(245, 245, 245));
-        hardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/btn.png"))); // NOI18N
+        hardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/btn.png"))); // NOI18N
         hardButton.setText("hard");
         hardButton.setBorderPainted(false);
         hardButton.setContentAreaFilled(false);
@@ -678,7 +678,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jPanel1.add(hardButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 400, -1, -1));
 
         backButton.setForeground(new java.awt.Color(245, 245, 245));
-        backButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/btn.png"))); // NOI18N
+        backButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/btn.png"))); // NOI18N
         backButton.setText("back");
         backButton.setBorderPainted(false);
         backButton.setContentAreaFilled(false);
@@ -701,16 +701,16 @@ public final class MainFrame extends javax.swing.JFrame {
         });
         jPanel1.add(backButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 440, -1, -1));
 
-        menuBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/CRR_logo.png"))); // NOI18N
+        menuBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/CRR_logo.png"))); // NOI18N
         jPanel1.add(menuBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 640, 480));
 
-        viniete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/viniet.png"))); // NOI18N
+        viniete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/viniet.png"))); // NOI18N
         jPanel1.add(viniete, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         character.setPreferredSize(new java.awt.Dimension(44, 76));
         jPanel1.add(character, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 350, -1, -1));
 
-        gif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/graphics/vhs.gif"))); // NOI18N
+        gif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/classes/graphics/vhs.gif"))); // NOI18N
         jPanel1.add(gif, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pointsLabel.setBackground(new java.awt.Color(0, 0, 0));
@@ -1050,7 +1050,7 @@ public final class MainFrame extends javax.swing.JFrame {
      */
     private void onMouseEnter(JButton btn){
         btn.setForeground(new java.awt.Color(255, 143, 159));
-        btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/btn2.png")));
+        btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("graphics/btn2.png")));
     }
 
     /**
@@ -1059,7 +1059,7 @@ public final class MainFrame extends javax.swing.JFrame {
      */
     private void onMouseExit(JButton btn){
         btn.setForeground(new java.awt.Color(245, 245, 245));
-        btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("../graphics/btn.png")));
+        btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("graphics/btn.png")));
     }
     
     /**
